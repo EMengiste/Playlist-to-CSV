@@ -1,0 +1,33 @@
+from bs4 import BeautifulSoup
+import requests
+import csv
+
+source = requests.get('https://open.spotify.com/playlist/7LAv6qMm12mNxykbhS5vLw').text
+
+soup = BeautifulSoup(source, 'lxml')
+soup.prettify()
+csv_file = open('cms_scrape.csv', 'w')
+
+csv_writer = csv.writer(csv_file)
+csv_writer.writerow(['num','name', 'artist', 'album', "lyrics website"])
+tracklist=soup.ol
+tracklist.prettify()
+i = 1
+for track in tracklist:
+    name = track.find_all('span')
+
+    featuring = name[1].text.split('•')[0].replace(name[2].text,' ')
+    if featuring.
+    if name[4].text[0].isalpha():
+        album = name[4].text
+        if name[5].text[0].isalpha():
+            album = name[5].text
+    else:
+        album = name[3].text
+
+    print(i,name[0].text, name[2].text+', '+featuring, album, name[1].text)
+    print()
+    csv_writer.writerow([i,name[0].text, name[2].text+', '+featuring, album, name[1].text])
+    i+=1
+
+csv_file.close()
