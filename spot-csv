@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import csv
 
-source = requests.get('https://open.spotify.com/user/thekawaiiemo/playlist/1mBeJxjxSM0U7dJPsuUFg5?si=4cMDHp9sTTGxJuYNP_9jDQ').text
+source = requests.get('https://open.spotify.com/user/thekawaiiemo/playlist/1mBeJxjxSM0U7dJPsuUFg5?si=pG721SGHSaK0RboQp8lpbg').text
 
 soup = BeautifulSoup(source, 'lxml')
 soup.prettify()
@@ -17,7 +17,7 @@ for track in tracklist:
     name = track.find_all('span')
 
     featuring = name[1].text.split('•')[0].replace(name[2].text,' ')
-    if featuring.
+
     if name[4].text[0].isalpha():
         album = name[4].text
         if name[5].text[0].isalpha():
@@ -25,9 +25,13 @@ for track in tracklist:
     else:
         album = name[3].text
 
-    print(i,name[0].text, name[2].text+', '+featuring, album, name[1].text)
+    #print(i,name[0].text, name[2].text+', '+featuring, album, name[1].text)
     print()
-    csv_writer.writerow([i,name[0].text, name[2].text+', '+featuring, album, name[1].text])
+    artist= str(name[2].text).replace('&amp;', 'and').replace('&', 'and')
+    songName= (str(name[0].text).split(' - ')[0].split(' (')[0]).replace('&amp;', 'and').replace('&', 'and')
+    linkpart= artist.replace(' ', '-')+'-'+songName.replace(' ', '-')
+    lyricslink= "https://genius.com/"+linkpart+"-lyrics"
+    csv_writer.writerow([i,songName, artist+', '+featuring, album,lyricslink])
     i+=1
 
 csv_file.close()
