@@ -2,17 +2,18 @@ from bs4 import BeautifulSoup
 import requests
 import csv
 
-source = requests.get('https://open.spotify.com/user/thekawaiiemo/playlist/1mBeJxjxSM0U7dJPsuUFg5?si=pG721SGHSaK0RboQp8lpbg').text
+source = requests.get('https://open.spotify.com/user/thekawaiiemo/playlist/1mBeJxjxSM0U7dJPsuUFg5?si=ErJl3bihR4eH1aqZyQh4xA').text
 
 soup = BeautifulSoup(source, 'lxml')
 soup.prettify()
 csv_file = open('cms_scrape.csv', 'w')
-
+file = open('SongLyrics','w')
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(['num','name', 'artist', 'album', "lyrics website"])
 tracklist=soup.ol
 tracklist.prettify()
 i = 1
+
 for track in tracklist:
     name = track.find_all('span')
 
@@ -25,13 +26,20 @@ for track in tracklist:
     else:
         album = name[3].text
 
-    #print(i,name[0].text, name[2].text+', '+featuring, album, name[1].text)
     print()
     artist= str(name[2].text).replace('&amp;', 'and').replace('&', 'and')
-    songName= (str(name[0].text).split(' - ')[0].split(' (')[0]).replace('&amp;', 'and').replace('&', 'and')
-    linkpart= artist.replace(' ', '-')+'-'+songName.replace(' ', '-')
-    lyricslink= "https://genius.com/"+linkpart+"-lyrics"
-    csv_writer.writerow([i,songName, artist+', '+featuring, album,lyricslink])
-    i+=1
+    songName = (str(name[0].text).split(' - ')[0].split(' (')[0]).replace('&amp;', 'and').replace('&', 'and')
+    linkPart = artist.replace(' ', '-')+'-'+songName.replace(' ', '-')
+    lyricsLink = "https://genius.com/"+linkPart+"-lyrics"
+    try:
+        source = requests.get(lyricsLink).text
+        so = BeautifulSoup(source, 'lxml')
+        file.write("\n\n"+name[1].text+'\n'+so.p.text)
 
+    except:
+        print('no lyrics')
+
+    csv_writer.writerow([i, songName, artist+', '+featuring, album, lyricsLink])
+    i += 1
+file.close()
 csv_file.close()
