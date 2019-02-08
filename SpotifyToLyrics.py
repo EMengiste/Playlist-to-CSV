@@ -9,7 +9,7 @@ source = requests.get(link).text # gets the html for beautiful soup
 
 soup = BeautifulSoup(source, 'lxml')
 soup.prettify()
-csv_file = open('cms_scrape.csv', 'w')
+csv_file = open('music_data.csv', 'w')
 file = open('SongLyrics','w')
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(['num','name', 'artist', 'album', "lyrics website"])# creates .CSV type file
